@@ -1,87 +1,132 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Expense_tracker
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
-    //making a GUI 
-    //simple buttons
     public partial class MainWindow : Window
     {
+        private Budget budget;
+
         public MainWindow()
         {
-            //using math to have a set budget that can be inputed and deleted much like a calculator
-            //tracked with a data picker or chart research table what they are used for
-            //then add or subtract your expense items and monthly occurences 
-            //have it displayed as a list then another box to see how much money is needed and left over 
-            //allow it to go into the negatives
-            //the expense and its amount
-           
-
-
-            //pattern making variable to start with and that stay as unchanging variables
             InitializeComponent();
+            budget = new Budget();
+            expenseData.ItemsSource = budget.Expenses;
         }
 
         private void addExpense_Click(object sender, RoutedEventArgs e)
         {
-            //adds an expense you input
+            string expenseName = Expenses.Text;
+            double expenseCostValue = double.Parse(expenseCost.Text);
+            Expense expense = new Expense(expenseName, expenseCostValue);
+            budget.AddExpense(expense);
+            resultBox.Text = budget.CheckBudget();
+            ClearInputFields();
         }
 
         private void removeExpense_Click(object sender, RoutedEventArgs e)
         {
-
+            ClearInputFields();
         }
 
-        private void Expenses_TextChanged(object sender, TextChangedEventArgs e)
+        private void ClearInputFields()
         {
-            //name of the expenses
+            Expenses.Text = "";
+            expenseCost.Text = "";
+            budgetAmount.Text = "";
         }
 
-        private void expenseCost_TextChanged(object sender, TextChangedEventArgs e)
+        private void budgetAmount_TextChanged(object sender, RoutedEventArgs e)
         {
-            //cost of the expenses
+            TextBox budgetAmountTextBox = (TextBox)sender;
+            double budgetAmount = 0;
+            if (double.TryParse(budgetAmountTextBox.Text, out budgetAmount))
+            {
+                budget.SetBudget(budgetAmount);
+                resultBox.Text = budget.CheckBudget();
+            }
         }
-
-        private void resultBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void expenseData_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            //calculations if you can meet those expenses
+            // TODO: Implement logic for selecting and removing expenses from the DataGrid
         }
 
-        private void Budget_TextChanged(object sender, TextChangedEventArgs e)
+        private void Expenses_TextChanged(object sender, RoutedEventArgs e)
         {
-            //our budget or the amount that we have or that we are allowed to use\
-            
-
+            // TODO: Implement validation for expense name input
         }
 
-        private void expenseGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void expenseCost_TextChanged(object sender, RoutedEventArgs e)
         {
-            //displays the names of the my expenses and the amount that it costs
+            // TODO: Implement validation for expense cost input
         }
 
-      
-
-        private void budgetAmount_TextChanged(object sender, TextChangedEventArgs e)
+        private void resultBox_TextChanged(object sender, RoutedEventArgs e)
         {
+            // TODO: Implement logic for displaying budget status message
+        }
+    }
 
+    public class Expense
+    {
+        public string Name { get; set; }
+        public double Cost { get; set; }
+
+        public Expense(string name, double cost)
+        {
+            Name = name;
+            Cost = cost;
+        }
+    }
+
+    public class Budget
+    {
+        public double BudgetAmount { get; set; }
+        public List<Expense> Expenses { get; set; }
+
+        public Budget()
+        {
+            BudgetAmount = 0;
+            Expenses = new List<Expense>();
         }
 
+        public void SetBudget(double budgetAmount)
+        {
+            BudgetAmount = budgetAmount;
+        }
 
+        public void AddExpense(Expense expense)
+        {
+            Expenses.Add(expense);
+        }
+
+        public void RemoveExpense(Expense expense)
+        {
+            Expenses.Remove(expense);
+        }
+
+        public double GetTotalCost()
+        {
+            double totalCost = 0;
+            foreach (Expense expense in Expenses)
+            {
+                totalCost += expense.Cost;
+            }
+            return totalCost;
+        }
+
+        public string CheckBudget()
+        {
+            double totalCost = GetTotalCost();
+            if (totalCost <= BudgetAmount)
+            {
+                return "You have enough money in your budget for your expenses.";
+            }
+            else
+            {
+                return "You do not have enough money in your budget for your expenses.";
+            }
+        }
     }
 }
