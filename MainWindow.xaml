@@ -7,7 +7,27 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Background="#FFE8B3B3">
-        <Button x:Name="addExpense" Content="Add Expense" HorizontalAlignment="Left" Margin="300,308,0,0" VerticalAlignment="Top" Height="41" Width="95" Click="addExpense_Click"/>
+        <Button x:Name="addExpense" Content="Add Expense" HorizontalAlignment="Left" Margin="300,308,0,0" VerticalAlignment="Top" Height="41" Width="95" Click="addExpense_Click">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="20">
+                                    <!-- Set the corner radius here -->
+                                    <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
         <Button x:Name="removeExpense" Click="removeExpense_Click" Content="Remove Expense" Width="100" Margin="427,308,273,85">
             <Button.Style>
                 <Style TargetType="Button">
